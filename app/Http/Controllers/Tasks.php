@@ -9,6 +9,10 @@ use App\Http\Resources\TaskResource;
 use App\Http\Resources\TaskListResource;
 use App\Http\Resources\TaskCompletedResource;
 
+use App\Http\Requests\TaskRequest;
+use App\Http\Requests\TaskUpdateRequest;
+
+
 class Tasks extends Controller
 {
     /**
@@ -27,9 +31,9 @@ class Tasks extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TaskRequest $request)
     {
-        $data = $request->only(['title', 'notes', 'completed', 'due_date']);
+        $data = $request->only(['title', 'notes', 'due_date']);
         $task = Task::create($data);
         return new TaskResource($task);
     }
@@ -52,14 +56,14 @@ class Tasks extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update_all(Request $request, Task $task)
+    public function update_all(TaskUpdateRequest $request, Task $task)
     {
         $data = $request->only(['title', 'notes', 'completed', 'due_date']);
         $task->fill($data)->save();
         return new TaskResource($task);
     }
 
-    public function update_completed(Request $request, Task $task)
+    public function update_completed(TaskUpdateRequest $request, Task $task)
     {
         $data = $request->only(['completed']);
         $task->fill($data)->save();
