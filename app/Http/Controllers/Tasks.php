@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Task;
 
+use App\Http\Resources\TaskResource;
+use App\Http\Resources\TaskListResource;
+use App\Http\Resources\TaskCompletedResource;
+
 class Tasks extends Controller
 {
     /**
@@ -14,7 +18,7 @@ class Tasks extends Controller
      */
     public function index()
     {
-        //
+        return TaskListResource::collection(Task::all());
     }
 
     /**
@@ -27,7 +31,7 @@ class Tasks extends Controller
     {
         $data = $request->only(['title', 'notes', 'completed', 'due_date']);
         $task = Task::create($data);
-        return response($task, 201);
+        return new TaskResource($task);
     }
 
     /**
@@ -36,9 +40,9 @@ class Tasks extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Task $task)
     {
-        //
+        return new TaskResource($task);
     }
 
     /**
@@ -48,9 +52,18 @@ class Tasks extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update_all(Request $request, Task $task)
     {
-        //
+        $data = $request->only(['title', 'notes', 'completed', 'due_date']);
+        $task->fill($data)->save();
+        return new TaskResource($task);
+    }
+
+    public function update_completed(Request $request, Task $task)
+    {
+        $data = $request->only(['completed']);
+        $task->fill($data)->save();
+        return new TaskCompletedResource($task);
     }
 
     /**
@@ -59,8 +72,10 @@ class Tasks extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Task $task)
     {
-        //
+        $task->delete();
+
+        return response(null, 204);
     }
 }
