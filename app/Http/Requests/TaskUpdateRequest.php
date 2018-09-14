@@ -25,9 +25,9 @@ class TaskUpdateRequest extends FormRequest
     {
         return [
             "title" => ["string", "max:100"],
-            "notes" => ["text"],
+            // "notes" => ["string"],
             "completed" => ["boolean"],
-            "due_date" => ["date"]
+            // "due_date" => []
         ];
     }
 }
